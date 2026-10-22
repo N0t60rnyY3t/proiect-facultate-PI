@@ -3,7 +3,7 @@ Proiect Prelucrarea Imaginilor - Multi-Organ Segmentation
 
 State-of-the-Art : https://docs.google.com/document/d/1cKg4D9DxrEL5zmXVV7kAWRA3ovnvokz6t8a6zUpJmZw/edit?tab=t.0
 
-## Analiza Literaturii de Specialitate
+# I. Analiza Literaturii de Specialitate
 
 | Nr. | Autor(i)/An | Titlul articolului/proiectului | Aplicație/Domeniu | Tehnologii utilizate | Metodologie/Abordare | Rezultate | Limitari | Comentarii suplimentare |
 |---|---|---|---|---|---|---|---|---|
@@ -12,3 +12,28 @@ State-of-the-Art : https://docs.google.com/document/d/1cKg4D9DxrEL5zmXVV7kAWRA3o
 | 3 | Saikat Roy, Gregor Koehler, Constantin Ulrich, Michael Baumgartner, Jens Petersen, Fabian Isensee, Paul F. Jäger & Klaus H. Maier-Hein / 2023 | “MedNeXt: Transformer-driven Scaling of ConvNets for Medical Image Segmentation” | Segmentarea automată a imaginilor medicale 3D, în special identificarea și delimitarea organelor și tumorilor. Folosit pentru segmentarea tumorilor renale din CT și a tumorilor cerebrale din MRI. | Modelul este implementat în Python folosind PyTorch. Autorii utilizează și pipeline-ul de antrenare nnU-Net. | MedNeXt folosește o rețea neuronală convoluțională 3D de tip encoder–decoder. Aceasta învață să identifice caracteristici ale organelor din imagini și să genereze măști care delimitează fiecare structură. | Se folosește scorul Dice, care măsoară cât de bine se suprapun regiunile segmentate automat cu cele de referință. În experimentele varianta MedNeXt-L a obținut aproximativ 85% pe BTCV și 90% pe AMOS22 | Antrenarea pe imagini 3D necesită resurse de calcul foarte mari și consum mare de memorie. Performanța depinde de datele utilizate și nu este garantat că aceleași rezultate se vor obține pe alte aparate sau pe alte categorii de pacienți. | Este o alternativa la nnU-Net, pot fi comparate cele doua modele pe acelasi set de imagini CT pentru o analiza completa. |
 | 4 | Tugba Akinci D’Antonoli, Lucas K. Berger, Ashraya K. Indrakanti, Nathan Vishwanathan, Jakob Weiss / 2025 | “TotalSegmentator MRI: Robust Sequence-independent Segmentation of Multiple Anatomic Structures in MRI” | TotalSegmentator este un instrument bazat pe AI destinat segmentării automate a structurilor din imagini medicale CT și MRI. Poate identifica organe, dar și oase, mușchi și vase de sânge. Este util pentru analiza imaginilor medicale, măsurarea volumului organelor și cercetarea medicală. | Instrumentul este dezvoltat în Python și utilizează PyTorch și arhitectura nnU-Net. | Modelul a fost antrenat pe imagini medicale în care structurile anatomice au fost deja delimitate. Pentru o imagine nouă, modelul generează automat măști care arată ce regiuni aparțin fiecărui organ sau fiecărei structuri. | Performanța a fost evaluată cu ajutorul scorului Dice, care măsoară cât de bine se suprapun regiunile identificate de model cu delimitările realizate ca referință . În studiul CT, modelul a obținut 94%, respectiv 84% în testarea MRI | Modelul poate face erori la structuri mici și poate avea rezultate mai slabe atunci când imaginile diferă de cele întâlnite în timpul antrenării. | TotalSegmentator poate fi folositor în verificare deoarece poate obține rezultate fără antrenarea unui model de la zero. |
 | 5 | Tang et al / 2022 | “Self-Supervised Pre-Training of Swin Transformers for 3D Medical Image Analysis” | imagistica medicala 3D și segmentare multi-organ automata pe imagini CT metoda este utilizata pentru identificarea și delimitarea simultana a mai multor organe și structuri anatomice, în special în regiunea abdominala, facilitand analiza volumetrica și studiul morfologiei organelor | Swin Transformer, Swin UNETR, Deep Learning, PyTorch, MONAI | preantrenarea auto-supervizata a encoderului Swin Transformer pe 5050 de volume CT folosind 3 sarcini: reconstruirea regiunilor mascate, predictia rotatiei 3D și invatarea contrastiva | Scor Dice de 0,908 pentru segmentarea a 13 organe în setul BTCV; scor Dice mediu de 78,68% pe cele 10 sarcini MSD. | Preantrenarea reduce necesarul de date adnotate și îmbunătățește performanța segmentării. Modelul a fost preantrenat pe imagini CT, iar transferul catre RMN este limitat de diferențele dintre modalitățile imagistice. Antrenarea necesită resurse de calcul ridicate | cod disponibil prin MONAI. Arhitectura poate fi utilizata pentru segmentarea mai multor organe și regiuni anatomice fiind relevanta pentru dezvoltarea sistemelor automate de analiza imaginilor medicale 3D |
+
+# II. Schema Bloc a Aplicatiei
+
+### 1. Modulul de Formatare si Standardizare - User Input 
+**Rol**: Asigura compatibilitatea datelor de intrare cu cerințele stricte ale framework-ului.     
+**Descriere**: 
+    - Imaginile brute (de obicei format DICOM) sunt convertite în formatul NIfTI comprimat (.nii.gz).  
+    - Datele sunt organizate in structura de foldere specifica (antrenare/testare)   
+    - Trebuie facuta maparea etichetelor pentru fiecare organ (ficat, splina, etc.) și a tipului de imagine (CT/RMN), manual intr-un fisier dataset.json.   
+
+### 2. Modulul de Analiza si Planificare (Data Fingerprinting)
+**Rol**: Automatizeaza deciziile de prelucrare a datelor.    
+**Descriere**: 
+    - Sistemul extrage "amprenta" setului de date citind antetele imaginilor.   
+    - Analizeaza dimensiunea voxelilor, spatierea si distributia intensitatilor (_valorilor Hounsfield_).    
+    - Pe baza resurselor disponibile si datelor, genereaza automat parametrii optimi pentru arhitectura retelei, dimensiunea patch-urilor 3D și dimensiunea batch-ului.    
+
+### 3. Modulul de Preprocesare Dinamica
+**Rol**: Uniformizează datele fizice pentru a facilita învățarea.    
+**Descriere**: Aplica trei transformari matematice esențiale:    
+    a. _Cropping_: elimina zgomotul de fundal (aerul) din jurul pacientului, ceea ce optimizeaza memoria utilizata.    
+    b. _Resampling_: transforma volumele cu rezolutii inegale intr-o grila spatiala cu voxeli cuburi perfecte.   
+    c. _Normalizare_: taie valorile extreme și aplică normalizarea z-score (globală pentru CT, individuală pentru RMN).    
+
+
