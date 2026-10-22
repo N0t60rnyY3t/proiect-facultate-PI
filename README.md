@@ -15,6 +15,9 @@ State-of-the-Art : https://docs.google.com/document/d/1cKg4D9DxrEL5zmXVV7kAWRA3o
 
 # II. Schema Bloc a Aplicatiei
 
+imagine cu schea bloc
+( https://drive.google.com/file/d/1zSybaPR17A575LkhjkkNlNt7odtRvkdN/view?usp=drive_link )
+
 ### 1. Modulul de Formatare si Standardizare - User Input 
 **Rol**: Asigura compatibilitatea datelor de intrare cu cerințele stricte ale framework-ului.     
 **Descriere**: 
