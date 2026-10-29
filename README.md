@@ -39,4 +39,24 @@ imagine cu schea bloc
     b. _Resampling_: transforma volumele cu rezolutii inegale intr-o grila spatiala cu voxeli cuburi perfecte.   
     c. _Normalizare_: taie valorile extreme și aplică normalizarea z-score (globală pentru CT, individuală pentru RMN).    
 
+### 4. Modulul de Antrenare a Modelului
+**Rol**: Învățarea caracteristicilor anatomice.
+**Descriere**: 
+    - Utilizeaza o arhitectura convolutionala 3D (3d_fullres U-Net sau ResEnc U-Net).    
+    - Reteaua primeste patch-uri 3D decupate din imagini, aplicandu-se in timp real tehnici de augmentare a datelor (rotatii, zgomot, ajustari de contrast) pentru asigura invatarea modelului pe pacienți noi.   
+
+### 5. Modulul de Inferență (Predicție pe date noi)  
+**Rol**: Generarea predicțiilor pe scanări nevăzute anterior.   
+**Descriere**:    
+    - O scanare noua este procesata folosind tehnica "Sliding Window" (fereastră glisantă).    
+    - Reteaua scaneaza volumul 3D pe bucati (patch-uri) care se suprapun la margini.   
+    - Se aplică o ponderare Gaussiana pentru a imbina uniform patch-urile si a evita artefactele vizibile la granitele dintre ele.   
+
+### 6. Modulul de Post-procesare și Reconstrucție
+**Rol**: Rafinarea măștilor finale și exportul lor.   
+**Descriere**:    
+    - Sistemul aplica algoritmi de filtrare bazata pe componente conectate (elimină fragmente mici izolate de tesut prezise gresit în afara ficatului).    
+    - La final, volumul segmentat este convertit invers, din spațiul izotropic de lucru inapoi in rezolutia si geometria fizica originala a pacientului.    
+
+
 
