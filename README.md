@@ -3,6 +3,10 @@ Proiect Prelucrarea Imaginilor - Multi-Organ Segmentation
 
 State-of-the-Art : https://docs.google.com/document/d/1cKg4D9DxrEL5zmXVV7kAWRA3ovnvokz6t8a6zUpJmZw/edit?tab=t.0
 
+Videoclip: https://drive.google.com/file/d/1nz7B6ISUf8MfrqP8XZay8dntBtDv7QuE/view?usp=drive_link
+
+Prezentare: https://docs.google.com/presentation/d/1UKirvkzieJKmAJ6PfIbslOjzzQ0qppDr/edit?usp=drive_link&ouid=104273754484032316732&rtpof=true&sd=true
+
 # I. Analiza Literaturii de Specialitate
 
 | Nr. | Autor(i)/An | Titlul articolului/proiectului | Aplicație/Domeniu | Tehnologii utilizate | Metodologie/Abordare | Rezultate | Limitari | Comentarii suplimentare |
